@@ -38,10 +38,6 @@ public class NettyService extends Service {
         hashMap.put(GlobalConstant.CODE_BB_TRADE, NettyClient.init(GlobalConstant.CODE_BB_TRADE).setSocketIp("47.74.226.97", 28901));
         hashMap.put(GlobalConstant.CODE_MARKET, NettyClient.init(GlobalConstant.CODE_MARKET).setSocketIp("47.74.158.104", 28902));
         hashMap.put(GlobalConstant.CODE_KLINE, NettyClient.init(GlobalConstant.CODE_KLINE).setSocketIp("47.74.158.104", 28903));
-//        hashMap.put(GlobalConstant.CODE_BB_TRADE, NettyClient.init(GlobalConstant.CODE_BB_TRADE).connect("47.74.226.97", 28901));
-//        hashMap.put(GlobalConstant.CODE_MARKET, NettyClient.init(GlobalConstant.CODE_MARKET).connect("47.74.158.104", 28902));
-//        hashMap.put(GlobalConstant.CODE_KLINE, NettyClient.init(GlobalConstant.CODE_KLINE).connect("47.74.158.104", 28903));
-        //hashMap.put(GlobalConstant.CODE_KLINE, NettyClient.init(GlobalConstant.CODE_KLINE).connect("192.168.2.222", 28903));
     }
 
     @Override
