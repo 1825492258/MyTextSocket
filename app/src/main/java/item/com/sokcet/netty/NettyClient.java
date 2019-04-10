@@ -118,7 +118,7 @@ public class NettyClient {
                     Log.e(TAG, type + "--Socket连接失败......");
                     e.printStackTrace();
                 }
-                // 开启定时器，定时发送心跳包，保持长连接  这里按理说应该是在Socket连接成功后
+                // 开启定时器，定时发送心跳包，保持长连接  这里按理说应该是在Socket连接成功后，不过写在这里 如果第一次没有连上 会一直尝试建立连接的
                 mPingThread = new PingThread();
                 isConnect = true;
                 sendTime = System.currentTimeMillis();
