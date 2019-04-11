@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import item.com.sokcet.netty.NettyService;
 import item.com.sokcet.receiver.NetChangeReceiver;
+import item.com.sokcet.text.SlidingTabActivity;
 import item.com.sokcet.utils.SocketFactory;
 import item.com.sokcet.netty.SocketMessage;
 import item.com.sokcet.utils.GlobalConstant;
@@ -52,8 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 EventBus.getDefault().post(new SocketMessage(GlobalConstant.CODE_KLINE, SocketFactory.SUBSCRIBE_THUMB, new Gson().toJson(GlobalConstant.getMAP(GlobalConstant.SPOT)).getBytes()));
                 break;
             case R.id.btnThree:
-                EventBus.getDefault().post(new SocketMessage(GlobalConstant.CODE_KLINE, SocketFactory.UN_SUBSCRIBE_THUMB, new Gson().toJson(GlobalConstant.getMAP(GlobalConstant.SPOT)).getBytes()));
-                startTCP("BTC/USDT", 0);
+                SlidingTabActivity.show(this);
                 break;
         }
     }
