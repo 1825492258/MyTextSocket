@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import item.com.sokcet.netty.NettyService;
 import item.com.sokcet.receiver.NetChangeReceiver;
 import item.com.sokcet.text.SlidingTabActivity;
+import item.com.sokcet.text.TextFourActivity;
 import item.com.sokcet.utils.SocketFactory;
 import item.com.sokcet.netty.SocketMessage;
 import item.com.sokcet.utils.GlobalConstant;
@@ -26,20 +29,39 @@ import item.com.sokcet.utils.GlobalConstant;
 /**
  * 这个是我写来测试socket的
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
     Button button;
 
+    private TextView textView;
+    private EditText editText;
+    private TextView textView1;
+    private EditText editText1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        textView = findViewById(R.id.textView);
+        editText = findViewById(R.id.editText);
+        textView1 = findViewById(R.id.textView1);
+        editText1 = findViewById(R.id.editText1);
+
         button = findViewById(R.id.btnTwo);
         findViewById(R.id.btnOne).setOnClickListener(this);
         findViewById(R.id.btnTwo).setOnClickListener(this);
         findViewById(R.id.btnThree).setOnClickListener(this);
+        findViewById(R.id.btnFour).setOnClickListener(this);
         startService(new Intent(this, NettyService.class)); // 开启服务
         initReceiver();
+//        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                textView.setEnabled(hasFocus);
+//            }
+//        });
+
+        editText.setOnFocusChangeListener(this);
+        editText1.setOnFocusChangeListener(this);
     }
 
     @Override
@@ -54,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btnThree:
                 SlidingTabActivity.show(this);
+                break;
+            case R.id.btnFour:
+                TextFourActivity.show(this);
                 break;
         }
     }
@@ -99,6 +124,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (mNetReceiver != null) {
             unregisterReceiver(mNetReceiver);
             mNetReceiver = null;
+        }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch (v.getId()) {
+            case R.id.editText:
+                textView.setEnabled(!hasFocus);
+                break;
+            case R.id.editText1:
+                textView1.setEnabled(!hasFocus);
+                break;
         }
     }
 }

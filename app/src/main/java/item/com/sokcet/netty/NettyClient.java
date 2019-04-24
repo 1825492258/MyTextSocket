@@ -226,7 +226,7 @@ public class NettyClient {
                             releaseLastSocket(mSocket); // 清除socket
                             connectSocket(); // 重连socket
                         }
-                        Log.i(TAG, type + "----发送心跳包------");
+                        Log.d(TAG, type + "----发送心跳包------");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -7,5 +7,11 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
+    <style name="text_lab" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">#8c8c8c</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:colorAccent" tools:ignore="NewApi">#c6174e</item>
+        <item name="android:colorControlNormal" tools:ignore="NewApi">#3f51b5</item>
+        <item name="android:colorControlActivated" tools:ignore="NewApi">#c6174e</item>
+    </style>
 </resources>

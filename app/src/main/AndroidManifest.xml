@@ -24,7 +24,8 @@
         <service android:name=".netty.NettyService" />
         <service android:name=".netty.HelpService" />
 
-        <activity android:name=".text.SlidingTabActivity"></activity>
+        <activity android:name=".text.SlidingTabActivity" />
+        <activity android:name=".text.TextFourActivity"></activity>
     </application>
 
 </manifest>
