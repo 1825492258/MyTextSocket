@@ -6,7 +6,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/beanOne"
+            android:text="1位"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/beanTwo"
+            android:layout_width="wrap_content"
+            android:text="2位"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/beanThree"
+            android:layout_width="wrap_content"
+            android:text="还原"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
     <Button
         android:id="@+id/btnOne"
         android:layout_width="match_parent"

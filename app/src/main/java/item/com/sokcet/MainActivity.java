@@ -15,8 +15,14 @@ import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import item.com.sokcet.netty.NettyService;
 import item.com.sokcet.receiver.NetChangeReceiver;
@@ -37,22 +43,104 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText;
     private TextView textView1;
     private EditText editText1;
+
+    private ArrayList<TextBean> textBeans = new ArrayList<>();
+    private  List<TextBean> copyBeans ;
+    private void initBean() {
+        textBeans.clear();
+        textBeans.add(new TextBean("149.10", "1"));
+        textBeans.add(new TextBean("147.0542", "2"));
+        textBeans.add(new TextBean("145.8892", "3"));
+        textBeans.add(new TextBean("145.8872", "4"));
+        textBeans.add(new TextBean("144.9842", "5"));
+        textBeans.add(new TextBean("144.9649", "6"));
+        textBeans.add(new TextBean("142.9772", "7"));
+        textBeans.add(new TextBean("142.9712", "8"));
+
+        copyBeans = new ArrayList<>();
+        for (TextBean bean  : textBeans){
+            copyBeans.add(new TextBean(bean.getPrice(),bean.getAmount()));
+        }
+    }
+
+    public static String saveOneBitOne(Double d, int i) {
+        BigDecimal bd = new BigDecimal(d);
+        Double tem = bd.setScale(i, BigDecimal.ROUND_FLOOR).doubleValue();
+        return tem.toString();
+    }
+
+    private List removeDuplicate(List<TextBean> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).getPrice().equals(list.get(i).getPrice())) {
+                    list.get(i).setAmount(String.valueOf(Double.valueOf(list.get(i).getAmount()) + Double.valueOf(list.get(j).getAmount())));
+                    list.remove(j);
+                }
+            }
+        }
+        return list;
+    }
+
+    private void changeBean(int value) {
+        for (TextBean bean : textBeans) {
+            // 对数据价格进行截取
+            bean.setPrice(saveOneBitOne(Double.valueOf(bean.getPrice()), value));
+            Log.i("jiejie", bean.toString());
+        }
+        // 数据的合并
+     //   removeDuplicate(textBeans);
+        List<TextBean> temp = new ArrayList<>();
+
+        for (TextBean user : textBeans) {
+            if (!temp.contains(user)) {
+                temp.add(user);
+            } else {
+                temp.set(temp.indexOf(user), new TextBean(user.getPrice(), temp.get(temp.indexOf(user)).getAmount() + user.getAmount()));
+            }
+        }
+        for (TextBean bean : textBeans) {
+            Log.i("jiejie--------" ,bean.toString());
+        }
+
+        for (TextBean bean : temp) {
+            Log.i("jiejie----------" ,bean.toString());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initBean();
+
+        for (TextBean bean : textBeans) {
+            // 对数据价格进行截取
+            bean.setPrice(saveOneBitOne(Double.valueOf(bean.getPrice()), 2));
+            Log.i("jiejie", bean.toString());
+        }
+        for (TextBean bean : textBeans) {
+            Log.i("jiejie========textBeans" ,bean.toString());
+        }
+
+        for (TextBean bean : copyBeans) {
+            Log.i("jiejie=======copyBeans" ,bean.toString());
+        }
+      //  changeBean(2);
         textView = findViewById(R.id.textView);
         editText = findViewById(R.id.editText);
         textView1 = findViewById(R.id.textView1);
         editText1 = findViewById(R.id.editText1);
 
         button = findViewById(R.id.btnTwo);
+        findViewById(R.id.beanOne).setOnClickListener(this);
+        findViewById(R.id.beanTwo).setOnClickListener(this);
+        findViewById(R.id.beanThree).setOnClickListener(this);
         findViewById(R.id.btnOne).setOnClickListener(this);
         findViewById(R.id.btnTwo).setOnClickListener(this);
         findViewById(R.id.btnThree).setOnClickListener(this);
         findViewById(R.id.btnFour).setOnClickListener(this);
-        startService(new Intent(this, NettyService.class)); // 开启服务
-        initReceiver();
+        // startService(new Intent(this, NettyService.class)); // 开启服务
+        // initReceiver();
 //        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 //            @Override
 //            public void onFocusChange(View v, boolean hasFocus) {
@@ -67,6 +155,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.beanOne:
+                textBeans.clear();
+                textBeans.addAll(copyBeans);
+                changeBean(1);
+                break;
+            case R.id.beanTwo:
+                textBeans.clear();
+                textBeans.addAll(copyBeans);
+                changeBean(2);
+                break;
+            case R.id.beanThree:
+                textBeans.clear();
+                textBeans.addAll(copyBeans);
+
+
+                for (TextBean bean : textBeans) {
+                    Log.i("jiejie========textBeans" ,bean.toString());
+                }
+
+                for (TextBean bean : copyBeans) {
+                    Log.i("jiejie=======copyBeans" ,bean.toString());
+                }
+                break;
             case R.id.btnOne:
                 EventBus.getDefault().post(new SocketMessage(GlobalConstant.CODE_KLINE, SocketFactory.ENABLE_SYMBOL, new Gson().toJson(GlobalConstant.getMAP(GlobalConstant.SPOT)).getBytes()));
                 break;
@@ -138,4 +249,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    public static String formatPrice(double price, boolean halfUp) {
+        DecimalFormat formater = new DecimalFormat();
+        // keep 2 decimal places
+        formater.setMaximumFractionDigits(2);
+        formater.setGroupingSize(3);
+        formater.setRoundingMode(halfUp ? RoundingMode.HALF_UP : RoundingMode.FLOOR);
+        return formater.format(price);
+    }
+
+
 }
