@@ -15,6 +15,11 @@ import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -45,29 +50,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editText1;
 
     private ArrayList<TextBean> textBeans = new ArrayList<>();
-    private  List<TextBean> copyBeans ;
+    private ArrayList<TextBean> copyBeans;
+
     private void initBean() {
         textBeans.clear();
-        textBeans.add(new TextBean("149.10", "1"));
-        textBeans.add(new TextBean("147.0542", "2"));
-        textBeans.add(new TextBean("145.8892", "3"));
-        textBeans.add(new TextBean("145.8872", "4"));
-        textBeans.add(new TextBean("144.9842", "5"));
-        textBeans.add(new TextBean("144.9649", "6"));
-        textBeans.add(new TextBean("142.9772", "7"));
-        textBeans.add(new TextBean("142.9712", "8"));
+        textBeans.add(new TextBean("123.1200", "1"));
+        textBeans.add(new TextBean("0.1205", "2"));
+        textBeans.add(new TextBean("0.1206", "3"));
+        textBeans.add(new TextBean("0.1247", "4"));
+//        textBeans.add(new TextBean("144.9842", "5"));
+//        textBeans.add(new TextBean("144.9649", "6"));
+//        textBeans.add(new TextBean("142.9772", "7"));
+//        textBeans.add(new TextBean("142.9712", "8"));
 
-        copyBeans = new ArrayList<>();
-        for (TextBean bean  : textBeans){
-            copyBeans.add(new TextBean(bean.getPrice(),bean.getAmount()));
-        }
+
+        copyBeans = (ArrayList<TextBean>) deepCopy(textBeans);
+
     }
 
-    public static String saveOneBitOne(Double d, int i) {
-        BigDecimal bd = new BigDecimal(d);
-        Double tem = bd.setScale(i, BigDecimal.ROUND_FLOOR).doubleValue();
-        return tem.toString();
-    }
+//    public static String saveOneBitOne(Double d, int i) {
+//        BigDecimal bd = new BigDecimal(d);
+//        Double tem = bd.setScale(i, BigDecimal.ROUND_FLOOR).doubleValue();
+//        return tem.toString();
+//    }
 
     private List removeDuplicate(List<TextBean> list) {
         for (int i = 0; i < list.size() - 1; i++) {
@@ -84,11 +89,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void changeBean(int value) {
         for (TextBean bean : textBeans) {
             // 对数据价格进行截取
-            bean.setPrice(saveOneBitOne(Double.valueOf(bean.getPrice()), value));
-            Log.i("jiejie", bean.toString());
+            bean.setPrice(formatPrice2(Double.valueOf(bean.getPrice()), value));
+            Log.i("jiejie截取---", bean.toString());
         }
         // 数据的合并
-     //   removeDuplicate(textBeans);
         List<TextBean> temp = new ArrayList<>();
 
         for (TextBean user : textBeans) {
@@ -99,11 +103,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         for (TextBean bean : textBeans) {
-            Log.i("jiejie--------" ,bean.toString());
+            Log.i("jiejie--------", bean.toString());
         }
 
         for (TextBean bean : temp) {
-            Log.i("jiejie----------" ,bean.toString());
+            Log.i("jiejie----------tem", bean.toString());
         }
     }
 
@@ -115,17 +119,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         for (TextBean bean : textBeans) {
             // 对数据价格进行截取
-            bean.setPrice(saveOneBitOne(Double.valueOf(bean.getPrice()), 2));
+            bean.setPrice(formatPrice2(Double.valueOf(bean.getPrice()), 2));
             Log.i("jiejie", bean.toString());
         }
         for (TextBean bean : textBeans) {
-            Log.i("jiejie========textBeans" ,bean.toString());
+            Log.i("jiejie========textBeans", bean.toString());
         }
-
+        for (TextBean bean : textBeans) {
+            // 对数据价格进行截取
+            bean.setPrice(formatPrice2(Double.valueOf(bean.getPrice()), 1));
+            Log.i("jiejie截取---", bean.toString());
+        }
         for (TextBean bean : copyBeans) {
-            Log.i("jiejie=======copyBeans" ,bean.toString());
+            Log.i("jiejie=======copyBeans", bean.toString());
         }
-      //  changeBean(2);
+        //  changeBean(2);
         textView = findViewById(R.id.textView);
         editText = findViewById(R.id.editText);
         textView1 = findViewById(R.id.textView1);
@@ -156,26 +164,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.beanOne:
-                textBeans.clear();
-                textBeans.addAll(copyBeans);
+                textBeans = (ArrayList<TextBean>) deepCopy(copyBeans);
                 changeBean(1);
                 break;
             case R.id.beanTwo:
-                textBeans.clear();
-                textBeans.addAll(copyBeans);
+                textBeans = (ArrayList<TextBean>) deepCopy(copyBeans);
                 changeBean(2);
                 break;
             case R.id.beanThree:
-                textBeans.clear();
-                textBeans.addAll(copyBeans);
-
-
+                textBeans = (ArrayList<TextBean>) deepCopy(copyBeans);
                 for (TextBean bean : textBeans) {
-                    Log.i("jiejie========textBeans" ,bean.toString());
+                    Log.i("jiejie========textBeans", bean.toString());
                 }
 
                 for (TextBean bean : copyBeans) {
-                    Log.i("jiejie=======copyBeans" ,bean.toString());
+                    Log.i("jiejie=======copyBeans", bean.toString());
                 }
                 break;
             case R.id.btnOne:
@@ -250,14 +253,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static String formatPrice(double price, boolean halfUp) {
-        DecimalFormat formater = new DecimalFormat();
-        // keep 2 decimal places
-        formater.setMaximumFractionDigits(2);
-        formater.setGroupingSize(3);
-        formater.setRoundingMode(halfUp ? RoundingMode.HALF_UP : RoundingMode.FLOOR);
-        return formater.format(price);
+    public static <T> List<T> deepCopy(List<T> srcList) {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(byteOut);
+            out.writeObject(srcList);
+            ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+            ObjectInputStream inStream = new ObjectInputStream(byteIn);
+            @SuppressWarnings("unchecked")
+            List<T> destList = (List<T>) inStream.readObject();
+            return destList;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return srcList;
     }
 
-
+    public static String formatPrice2(double price, int roundingSize) {
+        DecimalFormat formater = new DecimalFormat();
+        StringBuffer stringBuffer = new StringBuffer("0.");
+        for (int j = 0; j < roundingSize; j++) {
+            stringBuffer.append("0");
+        }
+        formater.setRoundingMode(RoundingMode.FLOOR);
+        formater.applyPattern(stringBuffer.toString());
+        return formater.format(price);
+    }
 }

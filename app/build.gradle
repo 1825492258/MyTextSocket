@@ -39,7 +39,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
+    implementation (name:'securepay-4.0.2',ext:'aar')
+    implementation (name:'base-4.0.2',ext:'aar')
+    implementation (name:'mobilebank-4.0.2',ext:'aar')
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.google.code.gson:gson:2.8.2'
 

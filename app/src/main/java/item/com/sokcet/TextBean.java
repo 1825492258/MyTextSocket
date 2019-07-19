@@ -1,6 +1,8 @@
 package item.com.sokcet;
 
-public class TextBean {
+import java.io.Serializable;
+
+public class TextBean implements Cloneable, Serializable {
     private String price;
     private String amount;
 
@@ -32,6 +34,7 @@ public class TextBean {
                 ", amount='" + amount + '\'' +
                 '}';
     }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof TextBean) {
@@ -41,5 +44,14 @@ public class TextBean {
         return super.equals(o);
     }
 
-
+    @Override
+    protected Object clone()  {
+        TextBean textBean = null;
+        try {
+            textBean = (TextBean) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return textBean;
+    }
 }
